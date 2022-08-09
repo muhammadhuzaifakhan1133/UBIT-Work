@@ -13,9 +13,12 @@ def enterPivotRowColumn():
     pr -= 1
     pc -= 1
 
-M = [[1, 1, 2, 9],[2, 4, -3, 1], [3, 6, -5, 0]]
-NumberOfRows = 3
-NumberOfColumns = 4
+       #1
+M =[[1, 1, 2, 9],
+    [2, 4, -3, 1], 
+    [3, 6, -5, 0]] # 2
+NumberOfRows = len(M)
+NumberOfColumns = len(M[0])
 displayMetrics(M)
 
 
@@ -23,7 +26,7 @@ enterPivotRowColumn()
 
 while((pr >= 0) or (pc >= 0)):
     
-    pe = M[pr][pc]
+    pe = M[pr][pc] # 6
     if (pe == 0):
         print("Zero cannot be pivot element")
         enterPivotRowColumn()
