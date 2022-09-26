@@ -1,5 +1,3 @@
-from display_metrics import displayMetrics
-
 def inputMetrix():
     NR = int(input("Enter no of rows: "))
     NC = int(input("Enter no of columns: "))
@@ -29,7 +27,7 @@ def makeZero(M: list, pr, pc):
             M[r][c] = M[r][c] - valueToBeZero*M[pr][c]
     return M
 
-def getReducedMetrix(M:list):
+def getReducedRowEcholonForm(M:list):
     NR = len(M)
     for i in range(NR):
         pe = M[i][i]
@@ -37,7 +35,27 @@ def getReducedMetrix(M:list):
         M = makeZero(M, i, i)
     return M
 
-M = inputMetrix()
-M = getReducedMetrix(M)
-displayMetrics(M)
+def displayMetrics(metrics: list):
+    NR = len(metrics)
+    NC = len(metrics[0])
+    for row in range(NR):
+        for col in range(NC):
+            print(f"{metrics[row][col]:5.2f}", end="\t")
+        print()
+
+
+def product(metrix1, metrix2):
+    Result = []
+    NR = len(metrix1)
+    NC = len(metrix2[0])
+
+    for r in range(NR):
+        row = []
+        for c in range(NC):
+            ans = 0
+            for i in range(len(metrix1[0])):
+                ans += metrix1[r][i]*metrix2[i][c]
+            row.append(ans)
+        Result.append(row)
+    return Result
     
