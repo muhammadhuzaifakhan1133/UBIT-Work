@@ -1,3 +1,5 @@
+from fraction_class import Fraction
+
 def inputMetrix():
     NR = int(input("Enter no of rows: "))
     NC = int(input("Enter no of columns: "))
@@ -6,13 +8,14 @@ def inputMetrix():
         row = []
         for c in range(NC):
             val = int(input(f"Enter M[{r}][{c}]: "))
+            val = Fraction(val, 1)
             row.append(val)
         metrics.append(row)
     return metrics
 
 def makeOne(M:list, pr:int, pe:int):
-    NR = len(M)
-    for c in range(NR):
+    NC = len(M[0])
+    for c in range(NC):
         M[pr][c] = M[pr][c] / pe
     return M
 
@@ -28,8 +31,8 @@ def makeZero(M: list, pr, pc):
     return M
 
 def getReducedRowEcholonForm(M:list):
-    NR = len(M)
-    for i in range(NR):
+    NC = len(M[0])
+    for i in range(NC-1):
         pe = M[i][i]
         M = makeOne(M, i, pe)
         M = makeZero(M, i, i)
@@ -40,7 +43,7 @@ def displayMetrics(metrics: list):
     NC = len(metrics[0])
     for row in range(NR):
         for col in range(NC):
-            print(f"{metrics[row][col]:5.2f}", end="\t")
+            print(f"{metrics[row][col]}", end="\t")
         print()
 
 
