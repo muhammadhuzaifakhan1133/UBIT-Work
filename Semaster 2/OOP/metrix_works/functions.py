@@ -49,7 +49,7 @@ def displayMetrics(metrics: list):
     NC = len(metrics[0])
     for row in range(NR):
         for col in range(NC):
-            print(f"{metrics[row][col]:5.2f}", end="\t")
+            print(f"{metrics[row][col]}", end="\t")
         print()
 
 
