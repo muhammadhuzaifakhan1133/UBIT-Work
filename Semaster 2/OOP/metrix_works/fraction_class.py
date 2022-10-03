@@ -1,4 +1,4 @@
-class Fraction:
+class cFraction:
     def __init__(self, numerator, denominator):
         if (denominator == 0):
             raise ZeroDivisionError
@@ -15,40 +15,38 @@ class Fraction:
         return f"{self.numerator}/{self.denominator}"
 
     def __add__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            f2 = Fraction(f2, 1)
+        if not(isinstance(f2, cFraction)):
+            f2 = cFraction(f2, 1)
         denominator = self.denominator*f2.denominator
-        a = int(denominator/self.denominator)*self.numerator
-        b = int(denominator/f2.denominator)*f2.numerator
-        numerator = a + b
-        result = Fraction(numerator, denominator)
+        numerator = self.numerator * f2.denominator + f2.numerator * self.denominator
+        result = cFraction(numerator, denominator)
         self.simplify()
         return result
 
     def __mul__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            f2 = Fraction(f2, 1)
+        if not(isinstance(f2, cFraction)):
+            f2 = cFraction(f2, 1)
         numerator = self.numerator * f2.numerator
         denominator = self.denominator * f2.denominator
-        result = Fraction(numerator, denominator)
+        result = cFraction(numerator, denominator)
         result.simplify()
         return result
 
     def __sub__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            f2 = Fraction(f2, 1)
+        if not(isinstance(f2, cFraction)):
+            f2 = cFraction(f2, 1)
         f2.numerator = f2.numerator * -1
         return self + f2
 
     def __truediv__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            return self * Fraction(1, f2)
-        return self * Fraction(f2.denominator, f2.numerator)
+        if not(isinstance(f2, cFraction)):
+            return self * cFraction(1, f2)
+        return self * cFraction(f2.denominator, f2.numerator)
 
 
     def __lt__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            f2 = Fraction(f2, 1)
+        if not(isinstance(f2, cFraction)):
+            f2 = cFraction(f2, 1)
         a, b = self.__getNumeAfterMakingDenoSame(f2)
         return a < b
     
@@ -56,8 +54,8 @@ class Fraction:
         return f2 < self
 
     def __eq__(self, f2):
-        if not(isinstance(f2, Fraction)):
-            f2 = Fraction(f2, 1)
+        if not(isinstance(f2, cFraction)):
+            f2 = cFraction(f2, 1)
         a, b = self.__getNumeAfterMakingDenoSame(f2)
         return a == b
 
@@ -89,3 +87,7 @@ class Fraction:
         greatestDivisor = gcd(self.numerator, self.denominator)      
         self.numerator = int(self.numerator/greatestDivisor)
         self.denominator = int(self.denominator/greatestDivisor)
+
+f1 = cFraction(4, 7)
+f2 = cFraction(2, 8)
+print(f1+f2)
