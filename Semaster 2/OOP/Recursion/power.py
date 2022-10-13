@@ -7,5 +7,5 @@ def pow(x, n):
         n = abs(n)
         return 1/(x*pow(x, n-1))
 
-a = pow(2, -2)
+a = pow(2, -98)
 print(a)

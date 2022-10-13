@@ -27,5 +27,5 @@ for r in range(NR):
     for c in range(NC):
         if M[r][c] == 1:
             length_of_rivers += blob(M, r, c)        
-
+            
 print(length_of_rivers)
