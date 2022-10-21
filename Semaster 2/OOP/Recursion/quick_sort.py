@@ -19,6 +19,6 @@ def partition(arr, low, high):
     arr[high] = temp
     return i + 1
 
-M = [3, 7, 1, 9 , -5, 9, -33, 22, 101]
+M = [-3, 2, 1, -12, 99, 45, 0, 4]
 quickSort(M, 0, len(M)-1)
 print(M)
