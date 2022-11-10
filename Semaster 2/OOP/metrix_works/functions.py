@@ -1,79 +1,5 @@
 
-def inputMetrix():
-    NR = int(input("Enter no of rows: "))
-    NC = int(input("Enter no of columns: "))
-    metrics = metrixOfZeros(NR, NC)
-    for r in range(NR):
-        for c in range(NC):
-            metrics[r][c] = int(input(f"Enter M[{r}][{c}]: "))
-    return metrics
 
-def makeOne(M: list, row, pivotElement):
-    NC = len(M[0])
-    for col in range(NC):
-        M[row][col]= M[row][col] / pivotElement
-    return M
-
-def makeZero(M: list, pr:int, pc:int):
-    NR = len(M)
-    NC = len(M[0])
-    for r in range(NR):
-        if r == pr:
-            continue
-        valueToBeZero = M[r][pc]
-        for c in range(NC):
-            M[r][c] = M[r][c] -valueToBeZero * M[pr][c]
-    return M
-
-def interchangeTwoRow(M:list, current:int, new:int):
-    temp = M[current]
-    M[current] = M[new]
-    M[new] = temp
-    return M
-
-def getReducedRowEcholonForm(M:list):
-    NR = len(M)
-    NC = len(M[0])
-    pr = 0
-    for pc in range(NC):
-        for r in range(pr,NR):
-            if (M[r][pc] != 0):
-                break
-        if (r == NR-1) and (M[r][pc] == 0):
-            continue
-        if (r != pr):
-            M = interchangeTwoRow(M, r, pr)
-        pivotElement = M[pr][pc]
-        M = makeOne(M, pr, pivotElement)
-        M = makeZero(M, pr, pc)
-        pr += 1
-        if (pr > NR-1):
-            break
-    return M
-
-def displayMetrics(metrics: list):
-    NR = len(metrics)
-    NC = len(metrics[0])
-    for row in range(NR):
-        for col in range(NC):
-            print(f"{metrics[row][col]}", end="\t")
-        print()
-
-
-def product(metrix1, metrix2):
-    Result = []
-    NR = len(metrix1)
-    NC = len(metrix2[0])
-
-    for r in range(NR):
-        row = []
-        for c in range(NC):
-            ans = 0
-            for i in range(len(metrix1[0])):
-                ans += metrix1[r][i]*metrix2[i][c]
-            row.append(ans)
-        Result.append(row)
-    return Result
 
 
 def determinant(M):
@@ -155,3 +81,4 @@ def inverse(M):
         for c in range(NC):
             A[r][c] = adjointMetrix[r][c] * (1/d)
     return A
+
