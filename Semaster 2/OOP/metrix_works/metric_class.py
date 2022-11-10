@@ -1,13 +1,10 @@
-import numpy as np
-
 class cMetrics(list):
 
     def __init__(self, M:list=[]):
         super().__init__(M) # call list constructor
         self.__updateNoOfRowAndCol() # update NR (no of rows) and NC (no of cols)
         
-
-
+        
     def __str__(self):
         """
         print list of list in Metrix Form
@@ -86,7 +83,7 @@ class cMetrics(list):
             R.append(temp)
         return R
     
-    def product(self, M2, r=None, c=None, row = None, col = None):
+    def product(self, M2, i=None, j=None, row = None, col = None):
         """
         find product of self and M2\n
         here:\n
@@ -98,21 +95,21 @@ class cMetrics(list):
             raise ValueError("column of metrics 1 must be equal to row of metrics 2")
         
         # handle arguments
-        if (r != None) and (c == None): # if r is given for specific entry but c is not given
+        if (i != None) and (j == None): # if r is given for specific entry but c is not given
             raise ValueError("provide column number too for specific entry")
-        if (r == None) and (c != None): # if c is given for specific entry but r is not given
+        if (i == None) and (j != None): # if c is given for specific entry but r is not given
             raise ValueError("provide row number too for specific entry")
         if ((row != None) and (col != None)): # if row and col both given at same time
             raise ValueError("You dont get specific row and specifc column at a time")
-        if ((r != None)or(c!=None)) and ((row != None)or(col!=None)): # if r or c is given and row or col is given
+        if ((i != None)or(j!=None)) and ((row != None)or(col!=None)): # if r or c is given and row or col is given
             raise ValueError("You dont get specific entry and specific row or column at same time")
 
-        if (r == None) and (c == None) and (row == None) and (col == None):
+        if (i == None) and (j == None) and (row == None) and (col == None):
             # if you want to get all entries of product Metrics
             return self.__getProductMetrics(M2, NR=self.NR, NC=M2.NC)
-        if (r != None) and (c != None):
+        if (i != None) and (j != None):
             # if you want to get specific entry of product metrics and 'r' and 'c' is given
-            return self.__getSpecifcEntriesofProduct(M2, r, c)
+            return self.__getSpecifcEntriesofProduct(M2, i, j)
         if (row != None):
             # if you want to get specific 'row' of product metrics. 
             # Here output is a row vector, so NR (number of rows of product metrics) is 1
@@ -316,9 +313,8 @@ class cMetrics(list):
                 for c in range(i+1, R.NC):
                     if R[i][c] != 0:
                         break
-
-                # if there is no non zero entry to left of pivot element, then deteminant is zero
-                if (c == R.NC-1) and (R[i][c] == 0):
+                # if last entry is zero or there is no non zero entry to left of pivot element, then deteminant is zero
+                if (i+1 >= R.NC) or ((c == R.NC-1) and (R[i][c] == 0)):
                     return 0
                 # otherwise interchange the column where you find non zero entry, from the pivot column.
                 else:
@@ -334,6 +330,33 @@ class cMetrics(list):
             # make zero 
             R = R.__makeZero(i, i, upperEntries=False)
         return constant
+
+    def __deleteRowColumn(self, row, col):
+        """
+        Delete given row and column from matrix
+        """
+        # make copy of original metrix
+        R = self.copy()
+        # delete row but R is now a list object not cMetric object
+        R = R[:row] + R[row+1:]
+
+        # delete column
+        for r in range(len(R)):
+            R[r] = R[r][:col] + R[r][col+1:]
+
+        return cMetrics(R)
+        
+
+    def minor(self, i, j):
+        if (self.NR != self.NC):
+            raise ValueError("A is not a square metrix")
+
+        subMetrix = self.__deleteRowColumn(i, j)
+        
+        if (subMetrix.NR == 1) and (subMetrix.NC == 1):
+            return subMetrix[0][0]
+        
+        return subMetrix.determinant()
 
 
     def applySimplexMethod(self):
@@ -373,6 +396,6 @@ class cMetrics(list):
             minimum = min(R[0])
 
 
-array = np.random.randint(low=10, high=20,size=(100, 100)).tolist()
-M2 = cMetrics(array)
-print(M2.determinant())
+M2 = cMetrics([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(M2.minor(0, 0))
+print(M2)
