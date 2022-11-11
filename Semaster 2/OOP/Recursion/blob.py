@@ -10,6 +10,7 @@ def blob(img, r, c):
         
 file = open("Recursion/blob_img.txt")
 row = file.readline()
+print(row)
 M = [] # image array 
 # while (row exist)
 while (row != ""):

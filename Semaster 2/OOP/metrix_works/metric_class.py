@@ -396,6 +396,6 @@ class cMetrics(list):
             minimum = min(R[0])
 
 
-M2 = cMetrics([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-print(M2.minor(0, 0))
-print(M2)
+M2 = cMetrics([[1, 2, 4], [2, 6, 0]])
+M1 = cMetrics([[4, 1, 4, 3], [0, -1, 3, 1], [2,7,5, 2]])
+print(M2.product(M1))
