@@ -1,6 +1,13 @@
+from fraction_class import cFraction
+
+
 class cMetrics(list):
 
     def __init__(self, M:list=[]):
+        for r in range(len(M)):
+            for c in range(len(M[0])):
+                if not(isinstance(M[r][c], cFraction)):
+                    M[r][c] = cFraction(M[r][c], 1)
         super().__init__(M) # call list constructor
         self.__updateNoOfRowAndCol() # update NR (no of rows) and NC (no of cols)
         
@@ -15,7 +22,7 @@ class cMetrics(list):
         for row in range(NR):
             string += "[" #  inner open bracket
             for col in range(NC):
-                string += "%5.2f" % (self[row][col])
+                string += str(self[row][col])
                 if (col != NC-1): # if entry is not at last of row
                     string += "\t"
             string += "]" # inner closing bracket
@@ -57,7 +64,7 @@ class cMetrics(list):
         answer = 0 # entry at row i and col j in product Metrics
         # Multiply corresponding element of row i of M1 and col j of M2 and add up all results
         for k in range(self.NC):
-            answer += self[i][k] * M2[k][j]
+            answer = answer + (self[i][k] * M2[k][j])
         return answer
 
     def __getProductMetrics(self, M2, NR, NC, row=None, col=None):
@@ -164,6 +171,18 @@ class cMetrics(list):
             R.append(row)
         return R
     
+    def __truediv__(self, k):
+        """
+        divide metrix by scalar 'k'
+        """
+        R = cMetrics()
+        for r in range(self.NR):
+            row = []
+            for c in range(self.NC):
+                row.append(self[r][c] / k)
+            R.append(row)
+        return R
+    
     def __makeOne(self, row, pivotElement):
         """
         Make 1 to pivot element.\n
@@ -202,7 +221,8 @@ class cMetrics(list):
             valueToBeZero = R[r][pc]
             # for make zero we have to loop through all column to apply operation
             for c in range(R.NC):
-                R[r][c] = R[r][c] -valueToBeZero * R[pr][c]
+                tempRow = R[pr][c] * valueToBeZero
+                R[r][c] = R[r][c] - tempRow
             # eg.  R1   = R1     - 5*R3
             # 5 = value to be zeor
             # R3 = pivot row
@@ -289,7 +309,7 @@ class cMetrics(list):
             raise ValueError("Trace is undefined")
         answer = 0
         for i in range(self.NR):
-            answer += self[i][i]
+            answer = answer + self[i][i]
         return answer
     
     def determinant(self):
@@ -319,12 +339,12 @@ class cMetrics(list):
                 # otherwise interchange the column where you find non zero entry, from the pivot column.
                 else:
                     R = R.interchangeTwoColumn(i, c)
-                    constant *= -1
+                    constant = constant * -1
                     # update pivot element
                     pivot = R[i][i]
 
             # common number from pivot row to make pivot element 1
-            constant *= pivot
+            constant =  pivot * constant
             R = R.__makeOne(i, pivot)
 
             # make zero 
@@ -348,16 +368,74 @@ class cMetrics(list):
         
 
     def minor(self, i, j):
+        """
+        calculate the minor entry at ith row and jth column
+        """
+        # minor is only define for square matrix
         if (self.NR != self.NC):
             raise ValueError("A is not a square metrix")
 
+        # delete ith row and jth column
         subMetrix = self.__deleteRowColumn(i, j)
         
+        # if subMetrix contain only a number
         if (subMetrix.NR == 1) and (subMetrix.NC == 1):
             return subMetrix[0][0]
         
+        # return determinant of the sub metrix
         return subMetrix.determinant()
 
+    
+    def cofactor(self, i, j):
+        """
+        calculate the factor at ith row and jth column
+        """
+
+        # factor is only define for square metrix
+        if (self.NR != self.NC):
+            raise ValueError("A is not a square metrix")
+        
+        # return (-1)^(i+j) * minor at ith row and jth column
+        return  self.minor(i, j) * (-1)**(i+j)
+
+    def cofactorMatrix(self):
+        """
+        return the cofactor metrix of original metrix
+        """
+
+        # cofactor metrix is only define for square metrix
+        if (self.NR != self.NC):
+            raise ValueError("A is not a square metrix")
+
+        # create empty metrix
+        R = cMetrics()
+        # loop through all entries
+        for r in range(self.NR):
+            row = []
+            for c in range(self.NC):
+                # calculate cofactor at rth row and cth column
+                cij = self.cofactor(r, c)
+                # add cofactor entry to row
+                row.append(cij)
+            # add row to metrix
+            R.append(row)
+        return R
+
+    def adjoint(self):
+        """
+        return the adjoint metrix
+        """
+        # adjoint metrix is transpose of cofactor metrix
+        return self.cofactorMatrix().transpose()
+
+
+    def inverse(self):
+        """
+        return inverse metrix
+        """
+        # formula = adjoint of metrix / determinant of metrix
+        return self.adjoint() / self.determinant()
+        
 
     def applySimplexMethod(self):
         """
@@ -368,7 +446,7 @@ class cMetrics(list):
 
         # multipy top row with -1
         for c in range(R.NC):
-            R[0][c] *= -1
+            R[0][c] = R[0][c] * -1
 
         minimum = min(R[0])
         # we apply this process unitll the minimum of top row is greater than 0
@@ -396,6 +474,6 @@ class cMetrics(list):
             minimum = min(R[0])
 
 
-M2 = cMetrics([[1, 2, 4], [2, 6, 0]])
-M1 = cMetrics([[4, 1, 4, 3], [0, -1, 3, 1], [2,7,5, 2]])
-print(M2.product(M1))
+M2 = cMetrics([[0, 0, -2, 0, 7, 12], [2, 4, -10, 6, 12, 28], [2, 4, -5, 6, -5, -1]])
+# M1 = cMetrics([[4, 1, 4, 3], [0, -1, 3, 1], [2,7,5, 2]])
+print(M2.getReducedRowEcholonForm())

@@ -87,7 +87,3 @@ class cFraction:
         greatestDivisor = gcd(self.numerator, self.denominator)      
         self.numerator = int(self.numerator/greatestDivisor)
         self.denominator = int(self.denominator/greatestDivisor)
-
-f1 = cFraction(4, 7)
-f2 = cFraction(2, 8)
-print(f1+f2)
