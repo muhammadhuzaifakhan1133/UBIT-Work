@@ -3,11 +3,12 @@ from fraction_class import cFraction
 
 class cMetrics(list):
 
-    def __init__(self, M:list=[]):
-        for r in range(len(M)):
-            for c in range(len(M[0])):
-                if not(isinstance(M[r][c], cFraction)):
-                    M[r][c] = cFraction(M[r][c], 1)
+    def __init__(self, M:list=[], fraction=False):
+        if fraction:
+            for r in range(len(M)):
+                for c in range(len(M[0])):
+                    if not(isinstance(M[r][c], cFraction)):
+                        M[r][c] = cFraction(M[r][c], 1)
         super().__init__(M) # call list constructor
         self.__updateNoOfRowAndCol() # update NR (no of rows) and NC (no of cols)
         
@@ -472,8 +473,3 @@ class cMetrics(list):
             R.makeOne(pr, pe)
             R.makeZero(pr, pc)
             minimum = min(R[0])
-
-
-M2 = cMetrics([[0, 0, -2, 0, 7, 12], [2, 4, -10, 6, 12, 28], [2, 4, -5, 6, -5, -1]])
-# M1 = cMetrics([[4, 1, 4, 3], [0, -1, 3, 1], [2,7,5, 2]])
-print(M2.getReducedRowEcholonForm())
