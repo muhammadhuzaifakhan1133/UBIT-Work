@@ -2,6 +2,13 @@ import os, pickle
 from metric_class import cMetrics
 
 class VectorSpaceModel():
+
+    def __init__(self):
+        self.M = cMetrics()
+        self.UWL = cMetrics()
+        self.docNames = cMetrics()
+        self.termFreq = cMetrics()
+        self.docFreq = cMetrics()
     
     def wordIndex(self, txt:str, filepath):
         self.docNames.append(filepath)
@@ -33,16 +40,13 @@ class VectorSpaceModel():
                         file = open(i.path)
                         txt = file.read()
                         file.close()
-                        self.wordIndex(txt, i.path)
+                        self.wordIndex(txt, filepath=i.path)
                 else:
                     self.scan(i)
         except:
             pass
 
     def createVSM(self, dirPath):
-        self.UWL = cMetrics()
-        self.M = cMetrics()
-        self.docNames = cMetrics()
         self.scan(dirPath)
         self.calculateTermAndDocumentFreq()
         self.applyDocumentFrequency()
@@ -65,11 +69,9 @@ class VectorSpaceModel():
 
 
     def calculateTermAndDocumentFreq(self):
-        self.termFreq = cMetrics()
         for r in self.M:
             self.termFreq.append(sum(r))
             
-        self.docFreq = cMetrics()
         for c in range(self.UWL.NR):
             ans = 0
             for r in range(self.M.NR):
@@ -145,18 +147,13 @@ class VectorSpaceModel():
     def createQueryVector(self, query):
         self.queryVector = [[0] for _ in self.UWL]
         self.queryVector = cMetrics(self.queryVector)
-        wordsInQuery = query.split(" ")
+        wordsInQuery = query.lower().split(" ")
         for word in wordsInQuery:
             if word in self.UWL:
                 self.queryVector[self.UWL.index(word)][0] = 1
 
     def calculateResult(self):
-        self.Result = cMetrics()
-        for r in range(self.M.NR):
-            ans = 0
-            for k in range(self.M.NC):
-                ans += self.M[r][k] * self.queryVector[k][0] * self.termFreq[r] * self.docFreq[k]
-            self.Result.append([int(ans)])
+        self.Result = self.M.product(self.queryVector)
 
     def getFileNamesFromResult(self):
         r = zip(*sorted(zip(self.Result, self.docNames), reverse=True))
@@ -185,13 +182,12 @@ class VectorSpaceModel():
         self.createQueryVector(query)
         self.calculateResult()
         self.getFileNamesFromResult()
-        print("hello")
-        self.writeResultToHtml()
+        print(self.sortedDocNames)
 
 vsm = VectorSpaceModel()
 # # only one time
-# vsm.createVSM("C:\\Users\\huzai\\OneDrive\\Documents")
+# vsm.createVSM("D:\\")
 # vsm.writeVSM()
 
 vsm.readVSM()
-print("developer" in vsm.UWL)
+vsm.find("INJECTED")
